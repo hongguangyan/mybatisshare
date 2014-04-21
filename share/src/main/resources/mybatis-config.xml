@@ -8,8 +8,8 @@
 <configuration>
 
 	<plugins>
-		<plugin interceptor="com.my.mybatis.plugins.TestPlugins">
-			<property name="someProperty" value="100" />
+		<plugin interceptor="com.my.mybatis.plugins.SharePlugins">
+			<property name="prefix" value="_" />
 		</plugin>
 	</plugins>
 
@@ -22,6 +22,7 @@
 				<property name="username" value="empi" />
 				<property name="password" value="empi" />
 			</dataSource>
+			
 		</environment>
 	</environments>
 	<mappers>

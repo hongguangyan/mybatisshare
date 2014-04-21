@@ -1,8 +1,10 @@
 package com.my.mybatis.plugins;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.util.Properties;
 
+import org.apache.commons.lang.reflect.FieldUtils;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.plugin.Interceptor;
@@ -20,7 +22,7 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 		  type= StatementHandler.class,
 		  method = "prepare",
 		  args = {Connection.class})})
-public class TestPlugins implements Interceptor {
+public class SharePlugins implements Interceptor {
 	
 	private static final ObjectFactory DEFAULT_OBJECT_FACTORY = new DefaultObjectFactory();
     private static final ObjectWrapperFactory DEFAULT_OBJECT_WRAPPER_FACTORY = new DefaultObjectWrapperFactory();
@@ -30,9 +32,22 @@ public class TestPlugins implements Interceptor {
 		// TODO Auto-generated method stub
 		StatementHandler sh = (StatementHandler)paramInvocation.getTarget();
 		MetaObject metaStatementHandler = MetaObject.forObject(sh, DEFAULT_OBJECT_FACTORY, DEFAULT_OBJECT_WRAPPER_FACTORY);
+		/**
+		MappedStatement mappedStatement = (MappedStatement)metaStatementHandler.getValue("delegate.mappedStatement");
+		System.out.println(mappedStatement.getSqlSource().toString()+"xxx"+mappedStatement.getId());
+		Configuration configuration = (Configuration) metaStatementHandler.getValue("delegate.configuration");
+		**/
+		
+	    Object paraObj =  sh.getParameterHandler().getParameterObject();
+	    Class<?> superClass = paraObj.getClass().getSuperclass();
+	    Field tableConditionField = FieldUtils.getDeclaredField(superClass,"tableCondition", true);
+	    String tableCondition = (String)FieldUtils.readField(tableConditionField, paraObj);
+		
 		BoundSql bSql = sh.getBoundSql();
         String sql = bSql.getSql();
-        metaStatementHandler.setValue("delegate.boundSql.sql",sql);
+       
+        String newSql = ReplaceTable.replace(sql, "_"+tableCondition);
+        metaStatementHandler.setValue("delegate.boundSql.sql",newSql);
 		return paramInvocation.proceed();
 	}
 

@@ -26,6 +26,7 @@ public class App
 			SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
 			SqlSession session = sqlSessionFactory.openSession();
 			EEmpiLogExample ee = new EEmpiLogExample();
+			ee.setTableCondition("100");
 			List<EEmpiLog> empiLogList = session.selectList("com.my.mybatis.dao.EEmpiLogMapper.selectByExample", ee);
 			System.out.println(empiLogList.size());
 			session.close();
