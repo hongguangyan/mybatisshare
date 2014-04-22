@@ -36,8 +36,9 @@ public class SharePlugins implements Interceptor {
 		MappedStatement mappedStatement = (MappedStatement)metaStatementHandler.getValue("delegate.mappedStatement");
 		System.out.println(mappedStatement.getSqlSource().toString()+"xxx"+mappedStatement.getId());
 		Configuration configuration = (Configuration) metaStatementHandler.getValue("delegate.configuration");
+		System.out.println(paramInvocation.getArgs()[0]);
+
 		**/
-		
 	    Object paraObj =  sh.getParameterHandler().getParameterObject();
 	    Class<?> superClass = paraObj.getClass().getSuperclass();
 	    Field tableConditionField = FieldUtils.getDeclaredField(superClass,"tableCondition", true);
